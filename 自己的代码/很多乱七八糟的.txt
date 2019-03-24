@@ -1,0 +1,396 @@
+/*#include <iostream>
+
+#include <opencv2/opencv.hpp>
+
+using namespace std;
+
+int main()
+
+{
+
+cout << CV_MAJOR_VERSION << endl;
+while(1)
+getchar();
+return 0;
+
+}*/
+/*#include <highgui.hpp>
+#include <opencv2/highgui/highgui_c.h>
+
+char* argv1 = "D:\\no\\数据结构\\open\\open\\1.jpg";
+char* argv2 = "0.mp4";
+void picture(char* arg)
+{
+
+	IplImage* img = cvLoadImage(arg);
+	cvNamedWindow("Example", CV_WINDOW_AUTOSIZE);
+	cvShowImage("Example", img);
+	cvWaitKey(0);
+	cvReleaseImage(&img);
+	cvDestroyWindow("Examplel");
+}
+void video(char* arg)
+{
+	cvNamedWindow("Example2", CV_WINDOW_AUTOSIZE);
+	CvCapture* capture = cvCreateFileCapture(arg);
+	IplImage* frame;
+	while (1)
+	{
+		frame = cvQueryFrame(capture);
+		//if (!frame)
+			//break;
+		cvShowImage("Example2", frame);
+		char c = cvWaitKey(33);
+		if (c == 27)
+			break;
+	}
+	cvReleaseCapture(&capture);
+	cvDestroyWindow("Example2");
+}
+int main(int argc, char** argv)
+{
+	//picture(argv1);
+	video(argv2);
+}*/
+
+
+
+
+
+
+
+/**********************以下是c++程序******************************/
+
+
+
+/*例2-3 p23 显示视频                                        */
+/*
+#include<opencv2/highgui/highgui.hpp>
+#include<opencv2/imgproc/imgproc.hpp>
+using namespace cv;
+using namespace std;
+char* argv1 = "0.mp4";
+void e2_3(char* ar)//显示视频
+{
+	cv::namedWindow("E1", cv::WINDOW_AUTOSIZE);
+	cv::VideoCapture cap;
+	cap.open(string(ar));
+	cv::Mat frame;
+	while (1)
+	{
+		cap >> frame;
+		if (frame.empty())
+			break;
+		cv::imshow("E1", frame);
+		if (cv::waitKey(33) >= 0)
+			break;
+	}
+}
+int main()
+{
+	e2_3(argv1);
+	return 0;
+
+}
+*/
+/***********************结束**************************/
+
+/*例2-4 p25 显示视频，可拖动播放                                    */
+/*
+#include<opencv2/highgui/highgui.hpp>
+#include<opencv2/imgproc/imgproc.hpp>
+#include<iostream>
+#include<fstream>
+
+using namespace std;
+char* argv1 = "0.mp4";
+int g_slider_position = 0;
+int g_run = 1, g_dontset = 0;
+cv::VideoCapture g_cap;
+
+void onTrackbarSider(int pos, void*)
+{
+	g_cap.set(cv::CAP_PROP_POS_FRAMES, pos);
+
+	if (!g_dontset)
+		g_run = 1;
+	g_dontset = 0;
+}
+
+int main()
+{
+	cv::namedWindow("E2", cv::WINDOW_AUTOSIZE);
+	g_cap.open(string(argv1));
+	int frames = (int)g_cap.get(cv::CAP_PROP_FRAME_COUNT);
+	int tmpw   = (int)g_cap.get(cv::CAP_PROP_FRAME_WIDTH);
+	int tmph   = (int)g_cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+	cout << "Video has " << frames << "frames of dimensions(" << tmpw << "," << tmph << ")." << endl;
+	cv::createTrackbar("Position", "E2", &g_slider_position, frames, onTrackbarSider);
+	cv::Mat frame;
+	while (1)
+	{
+		if (g_run != 0)
+		{
+			g_cap >> frame;
+			if (frame.empty())
+				break;
+			int current_pos = (int)g_cap.get(cv::CAP_PROP_POS_FRAMES);
+			g_dontset = 1;cv::setTrackbarPos("Position", "E2", current_pos);
+			cv::imshow("E2", frame);
+			g_run = -1;
+		}
+		char c = (char)cv::waitKey(10);
+		if (c == 's')
+		{
+			g_run = 1;
+			cout << "Single step,run = " << g_run << endl;
+		}
+		if (c == 'r')
+		{
+			g_run = -1;
+			cout << "Run mode,run = " << g_run << endl;
+		}
+		if (c == 27)
+			break;
+	}
+	return 0;
+}*/
+/***********************结束**************************/
+
+/*例2-5 p29 显示图片，并平滑处理     模糊了                               */
+/*
+#include<opencv2/opencv.hpp>
+const char* argv1 = "D:\\no\\数据结构\\open\\open\\1.jpg";
+void e2_5(const cv::Mat&image)
+{
+	cv::namedWindow("E3_in", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("E3_out", cv::WINDOW_AUTOSIZE);
+	cv::imshow("E3_in", image);
+	cv::Mat out;
+	cv::GaussianBlur(image, out, cv::Size(5, 5), 3, 3);
+	cv::GaussianBlur(out, out, cv::Size(5, 5), 3, 3);
+	cv:imshow("E3_out", out);
+	cv::waitKey(0);
+}
+int main()
+{
+	cv::Mat argv = cv::imread(argv1, -1);
+	e2_5(argv);
+	return 0 ;
+}*/
+/***********************结束**************************/
+
+
+/***********************结束**************************/
+
+/*例2-6 p30 显示图片床长宽缩小为一半                              */
+/*
+#include<opencv2/opencv.hpp>
+const char* argv = "D:\\no\\数据结构\\open\\open\\1.jpg";
+//const char* argv0 = "D:\\no\\数据结构\\open\\open\\2.jpg";
+
+int main()
+{
+	cv::Mat argv1 = cv::imread(argv, -1);
+	cv::Mat argv2 ;
+	cv::namedWindow("E3_1", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("E3_2", cv::WINDOW_AUTOSIZE);
+	cv::imshow("E3_1", argv1);
+	cv::pyrDown(argv1, argv2);
+	cv::imshow("E3_2", argv2);
+	cv::waitKey(0);
+	return 0;
+}
+*/
+/***********************结束**************************/
+
+/*例2-7 p30 显示图片一张灰一张只有边界*/
+/*
+#include<opencv2/opencv.hpp>
+const char* argv = "D:\\no\\数据结构\\open\\open\\1.jpg";
+//const char* argv0 = "D:\\no\\数据结构\\open\\open\\2.jpg";
+
+int main()
+{
+cv::Mat argv1 = cv::imread(argv, -1);
+cv::Mat argv2;
+cv::Mat img_cny;
+cv::namedWindow("E3_1", cv::WINDOW_AUTOSIZE);
+cv::namedWindow("E3_2", cv::WINDOW_AUTOSIZE);
+
+cv::cvtColor(argv1, argv2, cv::COLOR_BGR2GRAY);
+cv::imshow("E3_1", argv2);
+cv::Canny(argv2, img_cny, 10, 100, 3, true);
+cv::imshow("E3_2", img_cny);
+cv::waitKey(0);
+return 0;
+}
+*/
+/***********************结束**************************/
+
+/*例2-10 p32 打开摄像头 失败*/
+/*
+#include<opencv2/opencv.hpp>
+#include<iostream>
+
+const char* argv = "D:\\no\\数据结构\\open\\open\\1.jpg";
+//const char* argv0 = "D:\\no\\数据结构\\open\\open\\2.jpg";
+
+int main()
+{
+	cv::Mat argv1 = cv::imread(argv, -1);
+	cv::Mat argv2;
+	cv::Mat img_cny;
+	cv::namedWindow("E4", cv::WINDOW_AUTOSIZE);
+	cv::VideoCapture cap;
+	if (1)
+	{
+		cap.open(0);
+
+	}
+	if (!cap.isOpened())
+	{
+		std::cerr << "Couldn't open capture." << std::endl;
+		return -1;
+
+	}
+	
+		
+	
+	return 0;
+}
+*/
+/***********************结束**************************/
+
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <math.h>
+
+using namespace cv;
+
+void RandomLineDemo();
+int main(int argc, char** argv) {
+	Mat m,z, dst;
+	m = imread("m.jpg");
+	//RandomLineDemo();
+	GaussianBlur(m, dst, Size(11, 11), 1, 11);
+	cvNamedWindow("out", CV_WINDOW_AUTOSIZE);
+	cvNamedWindow("out1", CV_WINDOW_AUTOSIZE);
+	imshow("out", dst);
+	blur(m, dst, Size(5, 5));
+	imshow("out1", dst);
+	waitKey(0);
+	/*z = imread("z.jpg");
+	if ((!m.data)||(!z.data)) {
+		printf("could not load image...\n");
+		return -1;
+	}
+	namedWindow("min", CV_WINDOW_AUTOSIZE);
+	namedWindow("zin", CV_WINDOW_AUTOSIZE);
+	namedWindow("out", CV_WINDOW_AUTOSIZE);
+	int rows, cols;
+	rows = m.rows;
+	cols = m.cols;
+	for (int row = 0;row < rows;row++)
+	{
+		for (int col = 0;col < cols / 2;col++)
+		{
+			m.at<Vec3b>(row, col)[0] = 255;
+			m.at<Vec3b>(row, col)[1] = 255;
+			m.at<Vec3b>(row, col)[2] = 255;
+		}
+	}
+	for (int row = 0;row < rows;row++)
+	{
+		for (int col = cols/2;col < cols;col++)
+		{
+			z.at<Vec3b>(row, col)[0] = 255;
+			z.at<Vec3b>(row, col)[1] = 255;
+			z.at<Vec3b>(row, col)[2] = 255;
+		}
+	}
+	imshow("min", m);
+	imshow("zin", z);
+	cv::addWeighted(m, 0.5, z, 0.5, 0, dst);
+	imshow("out", dst);
+	waitKey(0);
+	/*
+	int cols = (src.cols-1) * src.channels();//图像真正的行数
+	int offsetx = src.channels();//通道数
+	int rows = src.rows;//行数
+
+	dst = Mat::zeros(src.size(), src.type());//先建一个新的Mat
+	for (int row = 1; row < (rows - 1); row++) //不要第0行因为没得比较 边缘不比较
+	{
+		const uchar* previous = src.ptr<uchar>(row - 1);//记录上一行的地址
+		const uchar* current = src.ptr<uchar>(row);//记录当前行的地址
+		const uchar* next = src.ptr<uchar>(row + 1);//记录下一行的地址
+		uchar* output = dst.ptr<uchar>(row);//读取输出Mat的当前行
+		for (int col = offsetx; col < cols; col++) 
+		{
+			output[col] = saturate_cast<uchar>(5 * current[col] - (current[col- offsetx] + current[col+ offsetx] + previous[col] + next[col]));
+			//输出到新建的Mat中5乘中间减上下左右
+		}
+	}
+	*/
+	/*double t = getTickCount();
+	Mat kernel = (Mat_<char>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
+	filter2D(src, dst, src.depth(), kernel);
+	double timeconsume = (getTickCount() - t) / getTickFrequency();
+	printf("tim consume %.2f\n", timeconsume);*/
+	/*cvtColor(src,dst,CV_RGB2GRAY);
+	imshow("input image", dst);
+	int cols = dst.cols;
+	int rows = dst.rows;
+	for (int row = 0;row < rows;row++)
+	{
+		for (int col = 0;col < cols;col++)
+		{
+			dst.at<uchar>(row, col) = 255 - dst.at<uchar>(row, col);
+		}
+	}
+	namedWindow("output", CV_WINDOW_AUTOSIZE);
+	imshow("output", dst);
+	int rowc = src.rows;
+	int colc = src.cols;
+	for (int row = 0;row < rowc;row++)
+	{
+		for (int col = 0;col < colc;col++)
+		{
+			src.at<Vec3b>(row, col)[0] = 255 - src.at<Vec3b>(row, col)[0];//b
+			src.at<Vec3b>(row, col)[1] = 255 - src.at<Vec3b>(row, col)[1];//g
+			src.at<Vec3b>(row, col)[2] = 255 - src.at<Vec3b>(row, col)[2];//r
+		}
+	}
+	
+	namedWindow("output1", CV_WINDOW_AUTOSIZE);
+	
+	imshow("output1", src	);
+	imwrite("3.jpg", src);
+	waitKey(0);
+	waitKey(0);*/
+	return 0;
+}
+void RandomLineDemo()
+{
+	Mat m, z, dst;
+	m = imread("m.jpg");
+	RNG rng(12345);
+	Point pt1;
+	Point pt2;
+	Mat bg = Mat::zeros(m.size(), m.type());
+	namedWindow("random line demo", CV_WINDOW_AUTOSIZE);
+	for (int i = 0; i < 100000; i++) {
+		pt1.x = rng.uniform(0, m.cols);
+		pt2.x = rng.uniform(0, m.cols);
+		pt1.y = rng.uniform(0, m.rows);
+		pt2.y = rng.uniform(0, m.rows);
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		if (waitKey(50) > 0) {
+			break;
+		}
+		line(bg, pt1, pt2, color, 1, 8);
+		imshow("random line demo", bg);
+
+	}
+}

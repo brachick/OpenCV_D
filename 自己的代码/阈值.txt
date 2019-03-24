@@ -1,0 +1,30 @@
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <math.h>
+
+using namespace cv;
+int threshould_value = 127;//调阈值
+int threshould_max = 255;
+int type_value = 2;//调模式
+int type_max = 4;
+Mat gray,src,dst;
+void Threshould_Demo(int, void*);
+int main(int argc, char** argv) {
+	//Mat src, dst;
+	src = imread("1.jpg");
+	namedWindow("input", CV_WINDOW_AUTOSIZE);
+	imshow("input", src);//传入输入图片并显示
+	
+	cvtColor(src, gray, CV_BGR2GRAY);//转成灰度图像
+	namedWindow("output", CV_WINDOW_AUTOSIZE);
+	createTrackbar("阈值", "output", &threshould_value, threshould_max, Threshould_Demo);
+	createTrackbar("模式", "output", &type_value, type_max, Threshould_Demo);
+	Threshould_Demo(0, 0);
+	waitKey(0);
+	return 0;
+}	
+void Threshould_Demo(int, void*)
+{
+	threshold(gray, dst, 0, 255, THRESH_TRIANGLE | type_value);//源，目标，阈值，最大值，类型
+	imshow("output", dst);
+}
