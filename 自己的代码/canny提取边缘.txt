@@ -1,0 +1,30 @@
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <math.h>
+//canny高斯灰度计算梯度非最大值抑制高低阈值输出二值图像
+using namespace cv;
+void bar(int, void*);
+int yuzhi = 40;
+int yuzhi_max = 255;
+Mat src, dst,gray,ou;
+int main(int argc, char** argv) {
+	
+	src = imread("1.jpg");
+	namedWindow("input", CV_WINDOW_AUTOSIZE);
+	imshow("input", src);//传入输入图片并显示
+	namedWindow("out", CV_WINDOW_AUTOSIZE);
+	
+	cvtColor(src, gray, CV_BGR2GRAY);
+	blur(gray, gray, Size(3, 3),Point(-1,-1));
+	createTrackbar("阈值", "out", &yuzhi, yuzhi_max,bar);
+	waitKey(0);
+	return 0;
+}	
+void bar(int, void*)
+{
+	
+	Canny(gray, dst,yuzhi,yuzhi*2,3 ,false);//高于阈值*2保留，低于yuzhi舍弃，高于yuzhi低于*2且连续就连接起来
+	ou.create(dst.size(), dst.type());//初始化
+	src.copyTo(ou, dst);//把彩色的复制过去
+	imshow("out", ou); 
+}
